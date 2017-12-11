@@ -1,0 +1,10 @@
+ul li {
+   list-style-type: none; 
+   margin: 100px auto;
+
+}
+
+img {
+    max-height: 200px;
+    transition: all linear 0.2s;
+}
