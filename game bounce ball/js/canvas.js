@@ -1,8 +1,14 @@
 
+/**
+ * 方便调试
+ */
+
 var log = console.log.bind(console);
 
-
-function preference () {
+/**
+ * 一些游戏设置
+ */
+var _settings = (function () {
     var a = {
         x : 350, //初始位置
         speed : 5, //移动速度
@@ -11,11 +17,25 @@ function preference () {
         leftBorder : 0, //左边界
     }
     return a;
-}
+})();
 
-var _settings = preference();
+/**
+ * 砖块动作
+ */
 
- function pre_draw(){
+var brick = (function () {
+    var a = {
+        moveLeft: function(){
+            _settings.x -= _settings.speed;
+        },//左移动作
+        moveRight: function(){
+            _settings.x += _settings.speed;
+        },//右移动作
+    }
+    return a;
+})();
+
+function pre_draw(){
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
     ctx.fillStyle = "#e98c8c";
@@ -23,10 +43,7 @@ var _settings = preference();
         ctx.clearRect(0,400,800,30);
         ctx.fillRect(x,400,100,30);
     }
-}
-
-var draw = pre_draw();
-window.onload = draw(_settings.x);
+};
 
 function pre_move () {
     var timerR,timerL; //定时器
@@ -37,19 +54,22 @@ function pre_move () {
         if (key === "ArrowRight") {
             timerR = setInterval(function(){
                 if (_settings.x <= _settings.rightBorder - 105) {
-                    _settings.x += _settings.speed;
+                    brick.moveRight();
                     draw(_settings.x);
                 }
             },1000/_settings.frameRate)
         } else if (key === "ArrowLeft") {
             timerL = setInterval(function(){
                 if (_settings.x >= _settings.leftBorder + 5) {
-                    _settings.x -= _settings.speed;
+                    brick.moveLeft();
                     draw(_settings.x);
                 }
             },1000/_settings.frameRate)
         } 
     }
 }
-var move = pre_move();
-document.addEventListener("keydown",move,false);
+
+var draw = pre_draw();//初始化画布
+draw(_settings.x);//渲染画布
+var move = pre_move();//初始化按键控制
+document.addEventListener("keydown", move, false);//添加按键监听事件
