@@ -1,12 +1,6 @@
-/**
- * 简化log方便使用
- */
-var log = console.log.bind(console);
-// document.addEventListener("keydown",function(e){console.log(e)});
 
-/**
- * --------------------------------------------------------------------
- */
+var log = console.log.bind(console);
+
 
 function preference () {
     var a = {
