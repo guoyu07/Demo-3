@@ -5,10 +5,19 @@
 
 var log = console.log.bind(console);
 
+
+/**
+ * 画布(全局变量)
+ */
+
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+
+
 /**
  * 一些游戏设置
  */
-var _settings = (function () {
+function init_settings () {
     var a = {
         x : 350, //初始位置
         speed : 5, //移动速度
@@ -17,35 +26,34 @@ var _settings = (function () {
         leftBorder : 0, //左边界
     }
     return a;
-})();
-
-/**
- * 砖块动作
- */
-
-var brick = (function () {
-    var a = {
-        moveLeft: function(){
-            _settings.x -= _settings.speed;
-        },//左移动作
-        moveRight: function(){
-            _settings.x += _settings.speed;
-        },//右移动作
-    }
-    return a;
-})();
-
-function pre_draw(){
-    var canvas = document.getElementById("canvas");
-    var ctx = canvas.getContext("2d");
-    ctx.fillStyle = "#e98c8c";
-    return function (x){
-        ctx.clearRect(0,400,800,30);
-        ctx.fillRect(x,400,100,30);
-    }
 };
 
-function pre_move () {
+/**
+ * 砖块
+ */
+function init_brick (settings) {
+    ctx.fillStyle = "#e98c8c"; //砖块颜色
+    var a = {
+        draw: function (){
+            ctx.clearRect(0,400,800,30);
+            ctx.fillRect(settings.x,400,100,30);
+        },//砖块渲染动作
+        moveLeft: function(){
+            settings.x -= settings.speed;
+        },//砖块左移动作
+        moveRight: function(){
+            settings.x += settings.speed;
+        },//砖块右移动作
+    }
+    return a;
+};
+
+
+/**
+ * 控制函数
+ */
+
+function init_control (settings, brick) {
     var timerR,timerL; //定时器
     return function (e) {
         var key = e.key;
@@ -53,23 +61,28 @@ function pre_move () {
         clearInterval(timerL);
         if (key === "ArrowRight") {
             timerR = setInterval(function(){
-                if (_settings.x <= _settings.rightBorder - 105) {
+                if (settings.x <= settings.rightBorder - 105) {
                     brick.moveRight();
-                    draw(_settings.x);
+                    brick.draw(settings.x);
                 }
-            },1000/_settings.frameRate)
+            },1000/settings.frameRate)
         } else if (key === "ArrowLeft") {
             timerL = setInterval(function(){
-                if (_settings.x >= _settings.leftBorder + 5) {
+                if (settings.x >= settings.leftBorder + 5) {
                     brick.moveLeft();
-                    draw(_settings.x);
+                    brick.draw(settings.x);
                 }
-            },1000/_settings.frameRate)
+            },1000/settings.frameRate)
         } 
     }
 }
 
-var draw = pre_draw();//初始化画布
-draw(_settings.x);//渲染画布
-var move = pre_move();//初始化按键控制
-document.addEventListener("keydown", move, false);//添加按键监听事件
+function _main () {
+var settings = init_settings();//注册设置
+var brick = init_brick(settings);//注册砖块
+brick.draw(settings);//初始化砖块
+var control = init_control(settings, brick);//注册控制组件
+window.addEventListener("keydown", control, false);//添加按键监听事件
+}
+
+_main();
