@@ -62,33 +62,33 @@ var model = {
 var storage = {
     init: function(){
         if(!localStorage.cat){
-            localStorage.cat = JSON.stringify(model);
+            localStorage.cat = JSON.stringify(model);//若第一次运行本程序则将 model 数据初始化载入 LocalStorage
         } else if (localStorage.cat) {
-            controller.LSinMod();
+            controller.LSinMod();//若非第一次运行则从 LocalStorage 获取点赞数据
         }
     },
     saveToLS: function(){
-        localStorage.cat = JSON.stringify(model);
+        localStorage.cat = JSON.stringify(model);//编译最新的 model 为 JSON 格式储存至 LocalStorage
     },
     getFromLS: function(){
-        return JSON.parse(localStorage.cat);
+        return JSON.parse(localStorage.cat);//获取 LocalStorage 数据
     },
 }
 
 var controller = {
     getCount: function(catId){
-        return storage.getFromLS()["cat"+catId].likeCount;
+        return storage.getFromLS()["cat"+catId].likeCount;//获取点赞数据
     },
     getSrc: function(catId){
-        return storage.getFromLS()["cat"+catId].src;
+        return storage.getFromLS()["cat"+catId].src;//获取猫咪图片数据
     },
     like: function(catId){
-        model["cat"+catId].likeCount += 1;
-        storage.saveToLS();
-        view.updateLike(catId);
+        model["cat"+catId].likeCount += 1;//点赞+1s
+        storage.saveToLS();//储存至 LocalStorage
+        view.updateLike(catId);// 在页面上更新点赞数
     },
     LSinMod: function(){
-        model = storage.getFromLS();
+        model = storage.getFromLS();// model 从 LocalStorage 获取数据
     },
 }
 
@@ -102,10 +102,10 @@ var view = {
         this.list = document.querySelectorAll("h2");
         for (var i=0; i<view.list.length; i++){
             (function(i){
-            view.list[i].addEventListener("click", function(e){view.renderPic(e,i+1);view.updateLike(i+1)});//初始遍历列表添加监听事件
+            view.list[i].addEventListener("click", function(e){view.renderPic(e,i+1);view.updateLike(i+1)});//初始化遍历列表添加监听事件
             })(i)
         }
-        view.stage.s_img.addEventListener("click", function(e){controller.like(e.target.id)})//为展示出来的图片添加点赞事件
+        view.stage.s_img.addEventListener("click", function(e){controller.like(e.target.id)})//为展示区的图片添加点赞事件
     },
     renderPic: function(e,catId){
         view.stage.s_img.setAttribute("id",e.target.id);
