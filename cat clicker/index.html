@@ -7,17 +7,36 @@
         <link href="css/style.css" rel="stylesheet">
     </head>
     <body>
-        <h2 id="1">一只猫</h2>
-        <h2 id="2">二只猫</h2>
-        <h2 id="3">三只猫</h2>
-        <h2 id="4">四只猫</h2>
-        <h2 id="5">五只猫</h2>
-        <h2 id="6">六只猫</h2>
+        <h2 id="1"></h2>
+        <h2 id="2"></h2>
+        <h2 id="3"></h2>
+        <h2 id="4"></h2>
+        <h2 id="5"></h2>
+        <h2 id="6"></h2>
         <hr>
         <div id = "show">
             <h4></h4>
             <img>
             <p></p>
+        </div>
+        <div id = "admin">
+            <button id="admin-button">Admin</button>
+            <form id="admin-form" action="" method="" style="display:none;">
+                <p>
+                    <label for="form-name">猫名:</label>
+                    <input id="form-name" type="text" name="" placeholder="输入新的猫名">
+                </p>
+                <p>
+                    <label for="form-link">图片链接:</label>
+                    <input id="form-link" type="text" name="" placeholder="输入新的图片链接">
+                </p>
+                <p>
+                    <label for="form-count">点赞数:</label>
+                    <input id="form-count" type="text" name="" placeholder="输入新的点赞数">
+                </p>
+                <input id="form-save" type="button" value="save" type="submit">
+                <input id="form-cancel" type="button" value="cancel">
+            </form>
         </div>
         <script src="js/click.js"></script>
     </body>

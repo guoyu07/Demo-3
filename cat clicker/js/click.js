@@ -1,5 +1,5 @@
  var log = console.log.bind(console);
-
+//面条式代码
 // function _click (list) {
 //     var show = document.getElementById("show");
 //     var title = document.querySelector('h4');
@@ -16,7 +16,6 @@
 //         descText.innerHTML = "这只猫被赞了"+list[i].likeCount+"次";
 //     }
 // }
-
 // function __main(){
 // var list =document.querySelectorAll("h2")//载入所有图片资源
 // var click = _click(list);//注册click功能函数
@@ -27,33 +26,38 @@
 //     })(i);
 // }//添加监听事件
 // }
-
 // __main();
-
-(function(){
+// 
+// (function(){
 
 var model = {
     cat1: {
+        name:"一只猫",
         src:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1815872734,1365654438&fm=27&gp=0.jpg",
         likeCount:0,
     },
     cat2: {
+        name:"二只猫",
         src:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=288854877,662654077&fm=200&gp=0.jpg",
         likeCount:0,
     },
     cat3: {
+        name:"三只猫",
         src:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3640611312,3270221672&fm=27&gp=0.jpg",
         likeCount:0,
     },
     cat4: {
+        name:"四只猫",
         src:"https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=3676232921,924856186&fm=200&gp=0.jpg",
         likeCount:0,
     },
     cat5: {
+        name:"五只猫",
         src:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=4004882612,3608849549&fm=27&gp=0.jpg",
         likeCount:0,
     },
     cat6: {
+        name:"六只猫",
         src:"https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1422921158,1241989086&fm=27&gp=0.jpg",
         likeCount:0,
     },
@@ -76,11 +80,18 @@ var storage = {
 }
 
 var controller = {
-    getCount: function(catId){
-        return storage.getFromLS()["cat"+catId].likeCount;//获取点赞数据
+    init: function(){
+        storage.init();
+        view.init();
+    },
+    getName: function(catId){
+        return storage.getFromLS()["cat"+catId].name;
     },
     getSrc: function(catId){
         return storage.getFromLS()["cat"+catId].src;//获取猫咪图片数据
+    },
+    getCount: function(catId){
+        return storage.getFromLS()["cat"+catId].likeCount;//获取点赞数据
     },
     like: function(catId){
         model["cat"+catId].likeCount += 1;//点赞+1s
@@ -89,6 +100,19 @@ var controller = {
     },
     LSinMod: function(){
         model = storage.getFromLS();// model 从 LocalStorage 获取数据
+    },
+    adminChangeLS: function(){
+        var changingID = view.getStagePicID();//获得当前所修改的 ID
+        var adminData = view.getAdminData();//载入表单数据
+        for(var i in adminData){
+            if (adminData[i]!=""){
+                model["cat"+changingID][i] = adminData[i];
+            }
+        }//遍历填写的内容,除去未填写的部分
+        storage.saveToLS();
+        view.renderList();
+        view.renderPic(changingID);
+        view.updateLike(changingID);
     },
 }
 
@@ -100,24 +124,60 @@ var view = {
         this.stage.s_img = document.querySelector('img');
         this.stage.s_descText = document.querySelector('p');
         this.list = document.querySelectorAll("h2");
+        this.adminBtn = document.querySelector("#admin-button");
+        this.form = document.querySelector("#admin-form");
+        this.formName = document.querySelector("#form-name");
+        this.formLink = document.querySelector("#form-link");
+        this.formCount = document.querySelector("#form-count");
+        this.formSave = document.querySelector("#form-save");
+        this.formCount = document.querySelector("#form-count");
+
+        view.renderList();
         for (var i=0; i<view.list.length; i++){
             (function(i){
-            view.list[i].addEventListener("click", function(e){view.renderPic(e,i+1);view.updateLike(i+1)});//初始化遍历列表添加监听事件
+            view.list[i].addEventListener("click", function(e){view.setFlag(e);view.renderPic(i+1);view.updateLike(i+1)});//初始化遍历列表添加监听事件
             })(i)
         }
         view.stage.s_img.addEventListener("click", function(e){controller.like(e.target.id)})//为展示区的图片添加点赞事件
+        view.adminBtn.addEventListener("click", view.toggleSwitch );
+        view.formSave.addEventListener("click",controller.adminChangeLS);
     },
-    renderPic: function(e,catId){
+    setFlag: function(e){
         view.stage.s_img.setAttribute("id",e.target.id);
-        view.stage.s_title.innerHTML = view.list[catId-1].innerHTML;
+    },
+    renderList: function(){
+        for (var i = 0;i<view.list.length;i++){
+            view.list[i].innerHTML = controller.getName(i+1);
+        }
+    },
+    renderPic: function(catId){
+        view.stage.s_title.innerHTML = controller.getName(catId);
         view.stage.s_img.src = controller.getSrc(catId);
     },
     updateLike: function(catId){
         view.stage.s_descText.innerHTML = "这只猫被赞了"+controller.getCount(catId)+"次";
     },
+    toggleSwitch: function(){
+        if (view.form.style.display === "none"){
+            view.form.style.display = "block";
+        }else if (view.form.style.display === "block") {
+            view.form.style.display = "none";
+        }
+    },
+    getStagePicID: function(){
+        return view.stage.s_img.id;
+    },
+    getAdminData: function(){
+        var a = {
+            name: view.formName.value,
+            src: view.formLink.value,
+            likeCount: Number(view.formCount.value),
+        }
+        return a;
+    }
 }
 
-view.init();
-storage.init();
+//一触即发
+controller.init();
 
-})()
+// })()
