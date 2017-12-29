@@ -1,0 +1,170 @@
+* { margin:0; padding:0; } 
+
+html {
+    font-size: 10px;
+    font-family: "Helvetica Neue",Helvetica, Tahoma, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei";
+    box-sizing: border-box;
+    width:100%; 
+    height:100%;
+}
+
+body {
+    width:100%; 
+    height:100%;
+}
+
+hr {
+    height: 0.2 rem;
+    border-top: #7d97ad4b solid 1px;
+    margin: 1rem 4rem 4rem 4rem;
+}
+
+.clear {
+    clear: both;
+}
+
+.container::before {
+    z-index: -1000;
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 68rem;
+    background: linear-gradient(160deg,#02ccba,#aa7ecd);
+    transform-origin: left bottom;
+    transform: skew(0deg,-15deg);
+}
+
+a {
+    text-decoration: none;
+}
+
+.navigator a {
+    color: aliceblue;
+}
+
+.container {
+    width: 1180px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.header {
+    height: 9.6rem;
+    position: relative;
+}
+
+.logo {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(0 , -50% )  
+}
+
+.logo img {
+    height: 7rem;
+}
+
+.navigator {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translate(0 , -50% )  
+}
+
+.navigator a {
+    font-size: 1.6rem;
+    margin-left: 4em;
+}
+
+.banner {
+    font-size: 1.6rem;
+}
+
+.banner-main {
+    width: 47em;
+    height: 32em;
+    border: 1px lightgreen solid;
+    border-radius: 0.5em;
+    float: left;
+}
+
+.banner-minor {
+    height: 32em;
+    float: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.banner-card {
+    width: 24em;
+    height: 14rem;
+    border: 1px lightgreen solid;
+    border-radius: 0.5em;
+}
+
+.partners {
+    width: 100%;
+    padding: 4rem 0  2rem 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-content: center;
+}
+
+.partners img {
+    width: 10rem;
+}
+
+/* 微调 腾讯 Logo */
+.partners img[class="tencent"] {
+    width: 15rem;
+}
+/* 微调 Vive Logo */
+.partners img[class="vive"] {
+    height: 8rem;
+}
+
+.lesson {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.lesson-card {
+    width: 34rem;
+    height: 34rem;
+    border: 1px lightgreen solid;
+    border-radius: 0.8rem;
+    margin: 2rem;
+}
+
+.lesson-more {
+    font-size: 2.5rem;
+    /* position: absolute;
+    bottom: 0;
+    right: 0;
+    transform: translate(-5rem, 5rem); */
+    color: #02b3e4;
+}
+
+.review {
+    height: 45rem;
+    width: 100%;
+    margin: 10rem 0;
+    border: 1px lightgreen solid;
+    border-radius: 0.8rem;
+}
+
+.intro {
+    height: 45rem;
+    width: 100%;
+    margin: 10rem 0;
+    border: 1px lightgreen solid;
+    border-radius: 0.8rem;
+}
