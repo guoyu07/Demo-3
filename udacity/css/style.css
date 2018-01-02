@@ -67,10 +67,10 @@ a {
     align-items: center;
     box-sizing: border-box;
     z-index: 1000;
-    color: rgb(255, 255, 255);
-    transition: opacity .5s ease-in-out;
-    transition: top .3s ease-in-out;
-    /* transition: opacity .2s ease-in-out; */
+    color: #fff;
+    transition: background-color .3s cubic-bezier(0, 0.76, 0.04, 0.02),
+                top .2s ease-in-out;
+    
 }
 
 .header-sticky-conceal {
@@ -79,28 +79,45 @@ a {
     position: fixed;
     top: -8rem;
     background-color: rgb(255, 255, 255);
-    color: rgb(56, 56, 56);
+    color: #525c65;
     box-shadow: 0 1px 20px 0 rgba(46,61,73,.2);
-    /* opacity: 0; */
-    /* transition: all .4s cubic-bezier(0.42, 0, 0, 0.98); */
-    /* animation: sticky-slide-down .4s cubic-bezier(0.42, 0, 0, 0.98) .25s forwards; */
 }
 
 .header-sticky-show {
-    /* transform: translateY(100%); */
     top: 0;
     opacity: 100;
     
 }
 
-
 .logo img {
     height: 7rem;
 }
 
-.navigator a {
-    font-size: 1.6rem;
-    margin-left: 4em;
+.navigator a,
+.navigator span {
+    font-size: 1.5rem;
+    margin-left: 3em;
+    color: inherit;
+}
+
+.navigator #register {
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    width: 7em;
+    height: 2.3em;
+    line-height: 2.3em;
+    color: #fff;
+    background-color: #02ccba;
+    border-radius: .4em;
+    box-shadow: 8px 10px 20px 0 rgba(46,61,73,.15);
+    transition: all .3s ease-in-out;
+}
+
+.navigator #register:hover {
+    background-color: #02d1bf;
+    box-shadow: 2px 4px 8px 0 rgba(46,61,73,.2);
+
 }
 
 .banner {
@@ -209,11 +226,5 @@ a {
     border-radius: 0.8rem;
 }
 
-@keyframes sticky-slide-down {
-    100% {
-        opacity: 100;
-        transform: translateY(0);
-    }
-}
 
 
