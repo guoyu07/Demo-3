@@ -3,8 +3,8 @@ var log =console.log.bind(console);//方便调试
 // (function(){
 
 var view = {
-    isScrollDownOrUp : false,
-    isHeaderFixed : false,
+    isScrollDownOrUp: false,
+    isHeaderFixed: false,
     isHeaderShown: false,
     cacheScroll: 0,
     init: function(){

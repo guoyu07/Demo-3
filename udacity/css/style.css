@@ -211,11 +211,71 @@ a {
 }
 
 .review {
+    position: relative;
     height: 45rem;
     width: 100%;
     margin: 10rem 0;
+    border: 1px rgb(0, 0, 0) solid;
+    border-radius: 0.8rem;
+}
+
+/* .review div:nth-of-type(1){
+    position: absolute;
+    top: 0;
+    left: 80rem;
+    bottom: 0;
+    min-width: 30rem;
+    width: auto;
     border: 1px lightgreen solid;
     border-radius: 0.8rem;
+} */
+
+.review .middle {
+    width: 100%;
+    height: 100%;
+    float: left;
+    border: 1px lightgreen solid;
+    border-radius: 0.8rem;
+    background: #02d1bf;
+    word-wrap: break-word;
+}
+
+.review > .middle > .left {
+    width: 70rem;
+    height: 100%;
+    background: #525c65;
+}
+
+.review > .middle > .right {
+    position: absolute;
+    left: 71rem;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background: #525c65;
+
+}
+
+.review > .left {
+    position: relative;
+    right: 10rem;
+    width: 10rem;
+    height: 100%;
+    float: left;
+    margin-left: -100%;
+    border: 1px lightgreen solid;
+    background: #02b3e4;
+}
+
+.review > .right {
+    position: relative;
+    left: 10rem;
+    width: 10rem;
+    height: 100%;
+    float: left;
+    margin-left: -10rem;
+    border: 1px lightgreen solid;
+    background: #02b3e4;
 }
 
 .intro {
