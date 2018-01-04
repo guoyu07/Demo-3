@@ -112,8 +112,7 @@ var controller = {
         var adminData = __WEBPACK_IMPORTED_MODULE_2__view_js__["a" /* view */].getAdminData();// 载入 admin 表单数据
         for(var i in adminData){
             if (adminData[i]!=""){
-                try{__WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* model */]["cat"+changingID][i] = adminData[i]}
-                catch(e){console.log(adminData[i])}
+                __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* model */]["cat"+changingID][i] = adminData[i];
             }
         }//遍历填写的内容,除去未填写的部分,拣取填写的数据
         __WEBPACK_IMPORTED_MODULE_1__storage_js__["a" /* storage */].saveToLS();

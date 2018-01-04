@@ -38,8 +38,7 @@ var controller = {
         var adminData = view.getAdminData();// 载入 admin 表单数据
         for(var i in adminData){
             if (adminData[i]!=""){
-                try{model["cat"+changingID][i] = adminData[i]}
-                catch(e){console.log(adminData[i])}
+                model["cat"+changingID][i] = adminData[i];
             }
         }//遍历填写的内容,除去未填写的部分,拣取填写的数据
         storage.saveToLS();
