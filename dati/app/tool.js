@@ -4,7 +4,8 @@ exports.download = download;
 exports.downloadG = downloadG;
 
 //函数 获取下载网页源码 异步
-function download(url, callback) {
+function download(url, callback, index) {
+    index = index || undefined;
     http.get(url, function(res) {
         var data = "";
         res.on("data", function (chunk) {
@@ -12,7 +13,7 @@ function download(url, callback) {
             // console.log("正在抓取数据...")
         });
         res.on("end", function() {
-            callback(data);
+            callback(data, index);
             // console.log("数据抓取完成");
         });
     }).on("error", function(err) {
@@ -33,6 +34,22 @@ function downloadG(httpOptions, callback) {
         callback(null);
     });
 }// 针对 Google
+
+// function downloadAll3InBaidu(url, index, callback) {
+//     http.get(url, function(res) {
+//         var data = "";
+//         res.on("data", function (chunk) {
+//             data += chunk;
+//             // console.log("正在抓取数据...")
+//         });
+//         res.on("end", function() {
+//             callback(data, index);
+//             // console.log("数据抓取完成");
+//         });
+//     }).on("error", function(err) {
+//         callback(null);
+//     });
+// }// 针对国内搜索引擎
 
 //数组内按大小排序
 // function quickSort (arr) {

@@ -1,22 +1,13 @@
+
 var tool = require ('./tool.js');
 var get = require ('./get.js');
+var print = require ('./print');
 const http = require('http');
 const HttpProxyAgent = require('http-proxy-agent'); // node http 代理
 const url = require('url');
 const AipOcrClient = require("baidu-aip-sdk").ocr; // 百度 OCR
 const opn = require('opn'); // 跳转浏览器
 exports.baiduOCR = baiduOCR;
-
-var words_result_num; //百度返回识别结果数量
-var words_result; //百度返回的识别结果数组
-var isOptionFull = true; //是否三个选项识别完全
-var i,a;
-var question = ""; //储存问题
-var option = []; //储存选项
-var isOptionWordsMoreThan5 = false; //是否三个选项都超过5个字符
-var reqURL = ""; //储存组合链接--Baidu
-var reqURL2 = ""; //储存组合链接--Google
-var reqURL3 = ""; //储存组合链接--Sogo
 
 // 百度APPID/AK/SK
 var APP_ID = "10655178";
@@ -35,12 +26,25 @@ function baiduOCR(imageBuffer){
     var client = new AipOcrClient(APP_ID, API_KEY, SECRET_KEY);
     // 带参数调用通用文字识别, 图片参数为本地图片
     client.generalBasic(imageBuffer, options).then(function(result) {
+        var words_result_num; //百度返回识别结果数量
+        var words_result; //百度返回的识别结果数组
+        var isOptionFull = true; //是否三个选项识别完全
+        var i, a;
+        var question = ""; //储存问题
+        var option = []; //储存选项
+        var finalOption = [];
+        var HMOptionsWordsMoreThan5 = 0; //超过5个字符个数
+        var reqURL = ""; //储存组合链接--Baidu
+        var reqURL2 = ""; //储存组合链接--Google
+        var reqURL3 = ""; //储存组合链接--Sogo
+
         console.log("正在整理问题及选项...")
         words_result_num = result["words_result_num"];//百度返回识别结果数量
         words_result = result["words_result"];//百度返回的识别结果数组
         if (words_result_num <= 3 ){
             isOptionFull = false;
         }
+
         for(i in words_result){
             if (words_result_num >= 4) {
                 if(i <= words_result_num-4){
@@ -48,22 +52,53 @@ function baiduOCR(imageBuffer){
                 }
                 if (i > words_result_num-4){
                     option.push(words_result[i]["words"]); //收集选项文字
+                    // option.push(words_result[i]["words"].slice(2)); //UC 
                 }
             } else if ( words_result_num <= 3){
                 if ( i < 1 ){
                     question += words_result[i]["words"];
                 } else if ( i !== 0){
                     option.push(words_result[i]["words"]);
+                    // option.push(words_result[i]["words"].slice(2));//UC
                 }
             }
         } 
-        for ( a in option ){ 
-            if(option[a].length < 5){
-                isOptionWordsMoreThan5 = false;
-            } else if (option[a].length >= 5){
-                isOptionWordsMoreThan5 = true;
+
+        function OptionWordsProcessor(){
+            var i, a, b, c;
+            var option_copy = option.concat();
+            for (i in option_copy){
+                if(option_copy[i].search(/《|》+/) >= 0){
+                    option_copy[i] = option_copy[i].slice(1,option_copy[i].length-1) //去书名号
+                } else if (option_copy[i].search(/[+]/) >= 1){
+                    option_copy[i] = option_copy[i].split("+") //去加号
+                } else if ((option_copy[i].search(/[·]/) >= 1)){
+                    option_copy[i] = option_copy[i].split("·") //去英文名分隔点
+                }
+            }
+            for (a in option_copy ){ 
+                if(option_copy[a].length < 5 || option_copy[a].search(/[0-9A-Za-z]/)>=0 ){
+                    HMOptionsWordsMoreThan5 += 0;
+                } else if (option_copy[a].length >= 5){
+                    HMOptionsWordsMoreThan5 += 1;
+                }
+            }
+            if ( HMOptionsWordsMoreThan5 < option_copy.length ){ // 选项短不用分词
+                for(b in option_copy) {
+                    finalOption[b] = option_copy[b];
+                }
+            } else if ( HMOptionsWordsMoreThan5 === option_copy.length ){ // 选项长需要分词
+                for(c in option_copy){
+                    let splitWords = [];//储存分词
+                    for ( d = 0; d <= option_copy[c].length-2; d += 2 ){
+                        splitWords.push(option_copy[c].slice(d, d+2)); //两两分词并储存进 splitWords
+                    }
+                    finalOption[c] = splitWords;
+                }
             }
         }
+        OptionWordsProcessor();  
+
         console.log("本轮问题是:"+question);
         console.log("正在跳转到百度...")
         opn('https://baidu.com/s?wd='+question);
@@ -83,33 +118,40 @@ function baiduOCR(imageBuffer){
         
         exports.isOptionFull = isOptionFull;
         exports.question = question;
+        exports.finalOption = finalOption;
         exports.option = option;
-        exports.isOptionWordsMoreThan5 = isOptionWordsMoreThan5;
 
         //下载数据
         tool.download(reqURL3, function(data){get.getResults(data, "搜狗 Sogo", "#main")}) //搜狗
         tool.download(reqURL, function(data){get.getResults(data, "百度 Baidu", "#content_left")}) //百度
         tool.downloadG(opts, function(data){get.getResults(data, "谷歌 Google","#res")}) //Google
         
-
         //获取3个选项百度搜索结果条数
-        // for(o=0;o < option.length;o++){
-        //     var encodeKeyWord = encodeURIComponent(question + option[o]);
-        //     reqURL = 'http://www.baidu.com/s?wd='+ encodeKeyWord ;
-        //     download(reqURL, o, function(data,index){
-        //         if(data){
-        //             var $ = cheerio.load(data, {
-        //                 decodeEntities: false
-        //             });
-        //             var num = $(".nums").html().split("百度为您找到相关结果约")[1].split("个")[0]
-        //             resNum[index] = num;
-        //         } else {
-        //             console.log("err");
-        //         }
-        //         console.log("选项"+  String.fromCharCode(65+index) + ":" + option[index] +" 结果约" + resNum[index] + "个")
-        //     });
-        // }
-        //console.log("抓取各选项百度数据量为:");
+        function analyzeBaiduResNum(){
+            var b, c;
+            var encodeKeyWord = "";
+            var optionInURL = "";
+            var reqURLspec = "";
+            var resNum = [];//储存每个选项的百度索引量
+            exports.resNum = resNum;
+            for(b in finalOption){
+                if (typeof finalOption[b] === "string"){
+                    optionInURL = finalOption[b];
+                    encodeKeyWord = encodeURIComponent(question + optionInURL);
+                } else if (typeof finalOption[b] === "object"){
+                    for (c in finalOption[b]){
+                        optionInURL = optionInURL + finalOption[b][c] + "+";
+                    }
+                    encodeKeyWord = encodeURIComponent(question + optionInURL);
+                }
+                reqURLspec = 'http://www.baidu.com/s?wd='+ encodeKeyWord ;
+                tool.download(reqURLspec, get.getBaiduAll3ResNum, b);
+             }
+        }
+        analyzeBaiduResNum();
+        setTimeout(() => {
+            print.printBaiduAll3ResNum();
+        }, 2800); 
 }).catch(function(err) {
     console.log(err);
 });

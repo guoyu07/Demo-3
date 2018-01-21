@@ -1,38 +1,35 @@
 var OCR = require ('./OCR.js');
 var tool = require ('./tool.js');
-var get = require ('./get.js');
 const stringOccurrence = require('string-occurrence'); // 文字检索
 exports.printResult = printResult;
+exports.printBaiduAll3ResNum = printBaiduAll3ResNum;
 function printResult(searchEngine, stringBuffer){
     var optOccu =[];//储存选项出现数量
     var i, a, b;
     var optAfterSort;
     console.log(">>>> 以下数据来自 " + searchEngine + " <<<<");
     function printOptions(i){
+        var b;
         var splitWords = [];//储存分词
         var stringOccuTemp = 0;
         var i = Number(i);
-        if ( !OCR.isOptionWordsMoreThan5 || !isNaN(OCR.option[i]) ){
-            optOccu[i] = stringOccurrence(stringBuffer, OCR.option[i]);
+        if ( typeof OCR.finalOption[i] === "string" ){
+            optOccu[i] = stringOccurrence(stringBuffer, OCR.finalOption[i]);
             console.log("选项" +  String.fromCharCode(65+i) + ":" + OCR.option[i] +" 出现约" + optOccu[i] + "次");
-        } else if ( OCR.isOptionWordsMoreThan5 ){ //如果某个选项的文字数大于等于4个字
-            for ( a = 0; a <= OCR.option[i].length-2; a += 2 ){
-                splitWords.push(OCR.option[i].slice(a,a+2)); //两两分词并储存进 splitWords
-            }
-            console.log(splitWords);
-            for ( b in splitWords ){
-                stringOccuTemp += stringOccurrence(stringBuffer, splitWords[b]);
+        } else if (typeof OCR.finalOption[i] === "object"){
+            for (b in OCR.finalOption[i]){
+                stringOccuTemp += stringOccurrence(stringBuffer, OCR.finalOption[i][b]);
             }
             optOccu[i] = stringOccuTemp;
             console.log("选项" +  String.fromCharCode(65+i) + ":" + OCR.option[i] +" 出现约" + optOccu[i] + "次");
         }
     }
-    for ( i in OCR.option) {
+    for (i in OCR.finalOption) {
         printOptions(i);
     } // 打印选项
     optAfterSort = tool.quickSort(optOccu); //[1, 2, 3, 4]
     console.log("— — — — — — — — — — — — — — — — —");
-    if( String(OCR.question).search(/不|错|最差|无关|无法|没关|没有|未与|未有+/) >= 0){  //不正确|不属|不包|不可能|不对|不用|不是|不指
+    if( String(OCR.question).search(/不正确|不属|不包|不可能|不对|不用|不是|不指|错|最差|无关|无法|没关|没有|未与|未有+/) >= 0){  //不正确|不属|不会|不包|不可能|不对|不用|不是|不指
         if (optAfterSort[0] === optAfterSort[1]){
             console.log("٩(ŏ﹏ŏ、)۶ 无法给出答案！")
         } else {
@@ -51,4 +48,10 @@ function printResult(searchEngine, stringBuffer){
         console.log("٩(ŏ﹏ŏ、)۶ 警告!选项识别不全!");
     }
     console.log("=================================");
+}
+function printBaiduAll3ResNum (){
+    console.log("各选项索引量为:");
+    for (a in OCR.option){
+        console.log("选项" +  String.fromCharCode(65+Number(a)) + ":" + OCR.option[a] +" 索引量为" + OCR.resNum[a] + "条");
+    }
 }
