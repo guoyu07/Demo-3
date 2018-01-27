@@ -10,7 +10,7 @@ function download(url, callback, index) {
         var data = "";
         res.on("data", function (chunk) {
             data += chunk;
-            // console.log("正在抓取数据...")
+            // console.log("正在抓取数据..."+data)
         });
         res.on("end", function() {
             callback(data, index);
@@ -35,38 +35,7 @@ function downloadG(httpOptions, callback) {
     });
 }// 针对 Google
 
-// function downloadAll3InBaidu(url, index, callback) {
-//     http.get(url, function(res) {
-//         var data = "";
-//         res.on("data", function (chunk) {
-//             data += chunk;
-//             // console.log("正在抓取数据...")
-//         });
-//         res.on("end", function() {
-//             callback(data, index);
-//             // console.log("数据抓取完成");
-//         });
-//     }).on("error", function(err) {
-//         callback(null);
-//     });
-// }// 针对国内搜索引擎
 
-//数组内按大小排序
-// function quickSort (arr) {
-//     　　if (arr.length <= 1) { return arr; }
-//     　　var pivotIndex = Math.floor(arr.length / 2);
-//     　　var pivot = arr.splice(pivotIndex, 1)[0];
-//     　　var left = [];
-//     　　var right = [];
-//     　　for (var i = 0; i < arr.length; i++){
-//     　　　　if (arr[i] < pivot) {
-//     　　　　　　left.push(arr[i]);
-//     　　　　} else {
-//     　　　　　　right.push(arr[i]);
-//     　　　　}
-//     　　}
-//     　　return quickSort(left).concat([pivot], quickSort(right));
-//     };
 var quickSort = ([n, ...nums], desc) => 
   isNaN(n)
     ? []

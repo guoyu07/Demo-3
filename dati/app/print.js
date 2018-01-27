@@ -14,11 +14,21 @@ function printResult(searchEngine, stringBuffer){
         var stringOccuTemp = 0;
         var i = Number(i);
         if ( typeof OCR.finalOption[i] === "string" ){
-            optOccu[i] = stringOccurrence(stringBuffer, OCR.finalOption[i]);
+            try {
+                optOccu[i] = stringOccurrence(stringBuffer, OCR.finalOption[i]);
+            } catch(error){
+                console.log("٩(ŏ﹏ŏ、)۶ "+searchEngine+" 无数据!");
+            }
             console.log("选项" +  String.fromCharCode(65+i) + ":" + OCR.option[i] +" 出现约" + optOccu[i] + "次");
         } else if (typeof OCR.finalOption[i] === "object"){
             for (b in OCR.finalOption[i]){
-                stringOccuTemp += stringOccurrence(stringBuffer, OCR.finalOption[i][b]);
+                // console.log("正在检索"+OCR.finalOption[i][b]);
+                // console.log(stringBuffer);
+                try {
+                    stringOccuTemp += stringOccurrence(stringBuffer, OCR.finalOption[i][b]);
+                } catch(error){
+                    console.log("٩(ŏ﹏ŏ、)۶ "+searchEngine+" 无数据!");
+                }
             }
             optOccu[i] = stringOccuTemp;
             console.log("选项" +  String.fromCharCode(65+i) + ":" + OCR.option[i] +" 出现约" + optOccu[i] + "次");
@@ -29,7 +39,8 @@ function printResult(searchEngine, stringBuffer){
     } // 打印选项
     optAfterSort = tool.quickSort(optOccu); //[1, 2, 3, 4]
     console.log("— — — — — — — — — — — — — — — — —");
-    if( String(OCR.question).search(/不正确|不属|不包|不可能|不对|不用|不是|不指|错|最差|无关|无法|没关|没有|未与|未有+/) >= 0){  //不正确|不属|不会|不包|不可能|不对|不用|不是|不指
+    if(/(不|错|最差|无关|无法|没关|没有|未与|未有){1}/.test(String(OCR.question))){
+    // if( String(OCR.question).search(/不|错|最差|无关|无法|没关|没有|未与|未有+/) >= 0){  //不正确|不属|不适合|不包|不可能|不对|不用|不是|不指
         if (optAfterSort[0] === optAfterSort[1]){
             console.log("٩(ŏ﹏ŏ、)۶ 无法给出答案！")
         } else {

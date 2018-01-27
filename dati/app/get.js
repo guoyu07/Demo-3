@@ -21,7 +21,11 @@ function getBaiduAll3ResNum (data, index){
         var $ = cheerio.load(data, {
             decodeEntities: false
         });
-        var num = $(".nums").html().split("百度为您找到相关结果约")[1].split("个")[0]
+        try {
+            var num = $(".nums").html().split("百度为您找到相关结果约")[1].split("个")[0];
+        } catch(error){
+            console.log("٩(ŏ﹏ŏ、)۶ 获取全部选项百度索引量出错")
+        };
         OCR.resNum[index] = num;
     } else {
         console.log("err");

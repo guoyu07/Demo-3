@@ -1,4 +1,3 @@
-
 var tool = require ('./tool.js');
 var get = require ('./get.js');
 var print = require ('./print');
@@ -48,32 +47,44 @@ function baiduOCR(imageBuffer){
         for(i in words_result){
             if (words_result_num >= 4) {
                 if(i <= words_result_num-4){
-                    question += words_result[i]["words"]; //收集问题文字
+                    question += words_result[i]["words"].replace(/^[0-9]{1,2}[\.:]?/,""); //收集问题文字
                 }
                 if (i > words_result_num-4){
-                    option.push(words_result[i]["words"]); //收集选项文字
-                    // option.push(words_result[i]["words"].slice(2)); //UC 
+                    option.push(words_result[i]["words"].replace(/^([A-Da-d]){1}[\.:]?/,"")); //收集选项文字
                 }
             } else if ( words_result_num <= 3){
                 if ( i < 1 ){
-                    question += words_result[i]["words"];
+                    question += words_result[i]["words"].replace(/^[0-9]{1,2}[\.:]?/,"");
                 } else if ( i !== 0){
-                    option.push(words_result[i]["words"]);
-                    // option.push(words_result[i]["words"].slice(2));//UC
+                    option.push(words_result[i]["words"].replace(/^([A-Da-d]){1}[\.:]?/,""));
                 }
             }
         } 
+
+        // 测试单元(测试前请连上手机)
+        // question = "啤酒的名称 是取自人名?";
+        // option = ['吉尼斯啤酒','福佳白','海尼根']
+        // 测试单元
 
         function OptionWordsProcessor(){
             var i, a, b, c;
             var option_copy = option.concat();
             for (i in option_copy){
-                if(option_copy[i].search(/《|》+/) >= 0){
-                    option_copy[i] = option_copy[i].slice(1,option_copy[i].length-1) //去书名号
-                } else if (option_copy[i].search(/[+]/) >= 1){
-                    option_copy[i] = option_copy[i].split("+") //去加号
-                } else if ((option_copy[i].search(/[·]/) >= 1)){
-                    option_copy[i] = option_copy[i].split("·") //去英文名分隔点
+                if(option_copy[i].search(/^[《“#]|[#》”]$/) >= 0){
+                    option_copy[i] = option_copy[i].slice(1,option_copy[i].length-1) //去书名号（优化对书名的搜索）
+                    console.log("(处理代号01)已去除两侧符号:"+option_copy[i]);
+                } 
+                if(option_copy[i].search(/[·&\+\-\,]/) >= 1){
+                    option_copy[i] = option_copy[i].split(/[·&\+\-\,]/) //去连接符号（优化对于英文名等选项的搜索）
+                    console.log("(处理代号02)已拆分选项:"+option_copy[i]);
+                } 
+                if(/^([0-9]+)([\.]?)([0-9]*)([a-zA-Z]+|[\u4e00-\u9fa5]+)$/.test(option_copy[i])){
+                    let optionCache = [];
+                    let wordsStartFrom = option_copy[i].search(/[a-zA-Z]+|[\u4e00-\u9fa5]+/);
+                    optionCache.push(option_copy[i].slice(0, wordsStartFrom ));
+                    optionCache.push(option_copy[i].slice(wordsStartFrom, option_copy[i].length ));
+                    option_copy[i] = optionCache;
+                    console.log("(处理代号03)已拆分选项:"+option_copy[i]);//拆分数字与中英文单位（优化对带中英文单位的选项的搜索）
                 }
             }
             for (a in option_copy ){ 
@@ -94,10 +105,13 @@ function baiduOCR(imageBuffer){
                         splitWords.push(option_copy[c].slice(d, d+2)); //两两分词并储存进 splitWords
                     }
                     finalOption[c] = splitWords;
+                    console.log("(处理代号04)选项过长已拆分选项:"+finalOption[c])
                 }
             }
+            // console.log(finalOption);
         }
         OptionWordsProcessor();  
+        
 
         console.log("本轮问题是:"+question);
         console.log("正在跳转到百度...")
@@ -106,6 +120,7 @@ function baiduOCR(imageBuffer){
         reqURL = "http://www.baidu.com/s?wd="+ encodeKeyWord;
         reqURL2 = "http://www.google.com.hk/search?q=" + encodeKeyWord;
         reqURL3 = "http://www.sogou.com/web?query=" + encodeKeyWord;
+        // console.log(reqURL3);
         console.log("正在分析答案...");
         console.log("=================================");
 
@@ -122,7 +137,7 @@ function baiduOCR(imageBuffer){
         exports.option = option;
 
         //下载数据
-        tool.download(reqURL3, function(data){get.getResults(data, "搜狗 Sogo", "#main")}) //搜狗
+        tool.download(reqURL3, function(data){get.getResults(data, "搜狗 Sogou", "#main")}) //搜狗
         tool.download(reqURL, function(data){get.getResults(data, "百度 Baidu", "#content_left")}) //百度
         tool.downloadG(opts, function(data){get.getResults(data, "谷歌 Google","#res")}) //Google
         
@@ -151,7 +166,7 @@ function baiduOCR(imageBuffer){
         analyzeBaiduResNum();
         setTimeout(() => {
             print.printBaiduAll3ResNum();
-        }, 2800); 
+        }, 3000); 
 }).catch(function(err) {
     console.log(err);
 });
