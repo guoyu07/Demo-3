@@ -12,6 +12,7 @@
   "dependencies": {
     "adbkit": "^2.11.0",
     "baidu-aip-sdk": "^2.0.3",
+    "bosonnlp": "^0.1.0",
     "cheerio": "^1.0.0-rc.2",
     "gm": "^1.23.1",
     "http": "0.0.0",

@@ -1,5 +1,7 @@
 var OCR = require ('./OCR.js');
 var tool = require ('./tool.js');
+var wordsProcessor = require ('./wordsProcessor.js');
+var get = require ('./get.js');
 const stringOccurrence = require('string-occurrence'); // 文字检索
 exports.printResult = printResult;
 exports.printBaiduAll3ResNum = printBaiduAll3ResNum;
@@ -13,19 +15,20 @@ function printResult(searchEngine, stringBuffer){
         var splitWords = [];//储存分词
         var stringOccuTemp = 0;
         var i = Number(i);
-        if ( typeof OCR.finalOption[i] === "string" ){
+        if ( typeof wordsProcessor.finalOption[i] === "string" ){
             try {
-                optOccu[i] = stringOccurrence(stringBuffer, OCR.finalOption[i]);
+                optOccu[i] = stringOccurrence(stringBuffer, wordsProcessor.finalOption[i]);
+                // console.log(stringBuffer);
             } catch(error){
                 console.log("٩(ŏ﹏ŏ、)۶ "+searchEngine+" 无数据!");
             }
             console.log("选项" +  String.fromCharCode(65+i) + ":" + OCR.option[i] +" 出现约" + optOccu[i] + "次");
-        } else if (typeof OCR.finalOption[i] === "object"){
-            for (b in OCR.finalOption[i]){
-                // console.log("正在检索"+OCR.finalOption[i][b]);
+        } else if (typeof wordsProcessor.finalOption[i] === "object"){
+            for (b in wordsProcessor.finalOption[i]){
+                // console.log("正在检索"+wordsProcessor.finalOption[i][b]);
                 // console.log(stringBuffer);
                 try {
-                    stringOccuTemp += stringOccurrence(stringBuffer, OCR.finalOption[i][b]);
+                    stringOccuTemp += stringOccurrence(stringBuffer, wordsProcessor.finalOption[i][b]);
                 } catch(error){
                     console.log("٩(ŏ﹏ŏ、)۶ "+searchEngine+" 无数据!");
                 }
@@ -34,12 +37,12 @@ function printResult(searchEngine, stringBuffer){
             console.log("选项" +  String.fromCharCode(65+i) + ":" + OCR.option[i] +" 出现约" + optOccu[i] + "次");
         }
     }
-    for (i in OCR.finalOption) {
+    for (i in wordsProcessor.finalOption) {
         printOptions(i);
     } // 打印选项
     optAfterSort = tool.quickSort(optOccu); //[1, 2, 3, 4]
     console.log("— — — — — — — — — — — — — — — — —");
-    if(/(不|错|最差|无关|无法|没关|没有|未与|未有){1}/.test(String(OCR.question))){
+    if(/(不正确|不属|不适合|不包|不可能|不对|不用|不是|不指|错|无关|无法|没关|没有|未与|未有){1}/.test(String(OCR.question))){
     // if( String(OCR.question).search(/不|错|最差|无关|无法|没关|没有|未与|未有+/) >= 0){  //不正确|不属|不适合|不包|不可能|不对|不用|不是|不指
         if (optAfterSort[0] === optAfterSort[1]){
             console.log("٩(ŏ﹏ŏ、)۶ 无法给出答案！")
@@ -60,9 +63,10 @@ function printResult(searchEngine, stringBuffer){
     }
     console.log("=================================");
 }
+
 function printBaiduAll3ResNum (){
     console.log("各选项索引量为:");
     for (a in OCR.option){
-        console.log("选项" +  String.fromCharCode(65+Number(a)) + ":" + OCR.option[a] +" 索引量为" + OCR.resNum[a] + "条");
+        console.log("选项" +  String.fromCharCode(65+Number(a)) + ":" + OCR.option[a] +" 索引量为" + get.resNum[a] + "条");
     }
 }
