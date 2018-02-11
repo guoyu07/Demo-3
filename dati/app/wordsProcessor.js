@@ -10,6 +10,14 @@ function OptionWordsProcessor(option){ //对选项进行文字优化
     var HMOptionsWordsMoreThan5 = 0; //超过5个字符个数
     var option_copy = option.concat();
 
+    for (a in option_copy ){ 
+        if(option_copy[a].length < 5 || option_copy[a].search(/[0-9A-Za-z]/)>=0 ){
+            HMOptionsWordsMoreThan5 += 0;
+        } else if (option_copy[a].length >= 5){
+            HMOptionsWordsMoreThan5 += 1;
+        }
+    }
+
     function localProcessor(i){
         // for (i in option_copy){
             if(option_copy[i].search(/[#《》“”°「」]/) >= 0){
@@ -29,13 +37,7 @@ function OptionWordsProcessor(option){ //对选项进行文字优化
                 console.log("(本地处理03)拆分选项:"+option_copy[i]);//拆分数字与中英文单位（优化对带中英文单位的选项的搜索）
             }
         // }
-        // for (a in option_copy ){ 
-        if(option_copy[i].length < 5 || option_copy[i].search(/[0-9A-Za-z]/)>=0 ){
-            HMOptionsWordsMoreThan5 += 0;
-        } else if (option_copy[i].length >= 5){
-            HMOptionsWordsMoreThan5 += 1;
-        }
-        // }
+
         if ( HMOptionsWordsMoreThan5 < option_copy.length ){ // 选项短不用分词
             // for(b in option_copy) {
                 finalOption[i] = option_copy[i];
@@ -45,7 +47,21 @@ function OptionWordsProcessor(option){ //对选项进行文字优化
             // for(c in option_copy){
             let splitWords = [];//储存分词
             for ( d = 0; d <= option_copy[i].length-2; d += 2 ){
-                splitWords.push(option_copy[i].slice(d, d+2)); //两两分词并储存进 splitWords
+                let isntSpecKeyword = 0;//排除干扰关键词
+                let a;
+                for(a in option){
+                    if(a === i){
+                        isntSpecKeyword += 0;
+                    } else {
+                        isntSpecKeyword += option[a].indexOf(option_copy[i].slice(d, d+2)) + 1 
+                    }
+                }
+                if (!isntSpecKeyword){
+                    splitWords.push(option_copy[i].slice(d, d+2));
+                } 
+                // else {
+                //     console.log(option_copy[i].slice(d, d+2)+ "出现在"+ option[a] + (option[a].indexOf(option_copy[i].slice(d, d+2)) + 1))
+                // }
             }
             finalOption[i] = splitWords;
             console.log("(本地处理04)暴力分词:"+finalOption[i])
@@ -70,17 +86,29 @@ function OptionWordsProcessor(option){ //对选项进行文字优化
                         // console.log(cache);
                     }
                 }
-                if(singleOpSpQu === cache){
+                if(singleOpSpQu === cache && cache >= 2){
                     // console.log("云端提取关键词"+option[a]);
                     nlp.extractKeywords(option[a], function(data){
                         // console.log(data);
                         data = JSON.parse(data);
                         // console.log(data);
-                        let cache = [];
-                        let c;
+                        var cache = [];
+                        var c;
                         for(c in data[0]){
                             if(data[0][c][0] >= 0.3){
-                                cache.push(data[0][c][1]);
+                                let isntSpecKeyword = 0;//排除干扰关键词
+                                let i;
+                                for(i in option){
+                                    if(i === a){
+                                        isntSpecKeyword += 0;
+                                    } else {
+                                        isntSpecKeyword += (option[i].indexOf(data[0][c][1]) + 1)
+                                    }
+                                }
+                                if (!isntSpecKeyword){
+                                    // console.log(data[0][c][1])
+                                    cache.push(data[0][c][1]);
+                                }
                             }
                         }
                         finalOption[a] = cache;

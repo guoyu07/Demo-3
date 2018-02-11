@@ -7,7 +7,7 @@ exports.getWebpage = getWebpage;
 exports.getBaiduAll3ResNum = getBaiduAll3ResNum;
 var areAllOpRd = false;
 var resNum = [];//储存每个选项的百度索引量
-exports.resNum = resNum;
+var areAllBaiduResNumRd = false;
 function getWebpage (data, searchEngine, contentId){
     if(data){
         // console.log(data);
@@ -16,7 +16,8 @@ function getWebpage (data, searchEngine, contentId){
         });
         // var stringBuffer = $(contentId).html()
         try {
-            var stringBuffer = $(contentId).html().replace(/<\/?em>|<\/?b>/g,"");
+            var stringBuffer = $(contentId).html().replace(/<\/?em>|<\/?b>|<a.*>/g,"");
+            // console.log(stringBuffer);
         } catch(error){
             console.log("٩(ŏ﹏ŏ、)۶ "+searchEngine+" 无数据!");
         }
@@ -54,10 +55,13 @@ function getBaiduAll3ResNum (data, index){
         });
         try {
             var num = $(".nums").html().split("百度为您找到相关结果约")[1].split("个")[0];
+            // console.log(num);
         } catch(error){
             console.log("٩(ŏ﹏ŏ、)۶ 获取全部选项百度索引量出错")
         };
         resNum[index] = num;
+        exports.resNum = resNum;
+        // console.log(baiduResReadyNum);
     } else {
         console.log("err");
     }
@@ -86,9 +90,23 @@ var timer2 = setInterval(function(){
     if(areAllOpRd){
         analyzeBaiduResNum(wordsProcessor.finalOption);
         clearInterval(timer2);
-        setTimeout(() => {
-            print.printBaiduAll3ResNum();
-        }, 1000);
+        var timer3 = setInterval(function(){
+            var a;
+            var ready = 0;
+            for (a in resNum){
+                if(resNum[a]){
+                    ready += 1
+                }
+            }
+            if(ready === OCR.option.length){
+                areAllBaiduResNumRd = true;
+            }
+            if(areAllBaiduResNumRd){
+                // console.log(baiduResReadyNum+" "+OCR.option.length);
+                print.printBaiduAll3ResNum();
+                clearInterval(timer3);
+            }
+        }, 500);
     }
 },500)
 

@@ -24,16 +24,18 @@ function printResult(searchEngine, stringBuffer){
             }
             console.log("选项" +  String.fromCharCode(65+i) + ":" + OCR.option[i] +" 出现约" + optOccu[i] + "次");
         } else if (typeof wordsProcessor.finalOption[i] === "object"){
+            let cache = [];
             for (b in wordsProcessor.finalOption[i]){
                 // console.log("正在检索"+wordsProcessor.finalOption[i][b]);
                 // console.log(stringBuffer);
                 try {
-                    stringOccuTemp += stringOccurrence(stringBuffer, wordsProcessor.finalOption[i][b]);
+                    cache.push(stringOccurrence(stringBuffer, wordsProcessor.finalOption[i][b]));
                 } catch(error){
                     console.log("٩(ŏ﹏ŏ、)۶ "+searchEngine+" 无数据!");
                 }
             }
-            optOccu[i] = stringOccuTemp;
+            let cacheAfterSort = tool.quickSort(cache);
+            optOccu[i] = cacheAfterSort[cacheAfterSort.length-1];
             console.log("选项" +  String.fromCharCode(65+i) + ":" + OCR.option[i] +" 出现约" + optOccu[i] + "次");
         }
     }

@@ -37,6 +37,7 @@ function baiduOCR(imageBuffer){
         var reqURL2 = ""; //储存组合链接--Google
         var reqURL3 = ""; //储存组合链接--Sogo
         
+        
         // console.log(result);
 
         console.log("正在整理问题及选项...")
@@ -63,6 +64,7 @@ function baiduOCR(imageBuffer){
             }
         } 
 
+
         // 测试单元(测试前请连上手机不必亮屏)
         // words_result_num = 3;
         // isOptionFull = true;
@@ -70,9 +72,18 @@ function baiduOCR(imageBuffer){
         // option = ['维生素A','维生素B','维生素C']
         // question = "在华北平原地区烧水时,水的沸点大约是?";
         // option = ['80°C ','90°C','100°C']
-        // question = "为什么人先看到闪电后听到雷声";
-        // option = ['美国哥伦比亚广播公司','','1998年3月24日']
-        // option = ['美国哥伦比亚广播公司']
+        // question = "中世纪城堡楼梯一般都是顺时针方向螺旋上升的原因是什么?";
+        // option = ['符合当时人们的审美','让防守城堡的人有优势','有利于城堡稳固']
+        // question = "发生洪水时洪水的最高水位处叫什么?";
+        // option = ['黄河洪峰水位','这是洪顶水位测试','所以洪极水位测试']
+        // question = "“胜作一书生”的前一句是以下哪个选项?";
+        // option = ['歌罢仰天叹','至今思项羽','宁为百夫长']
+        question = "古代甲骨文是书写在什么上的?";
+        option = ['龟甲或兽骨','石头上','木头上']
+        question = "综艺《演员的诞生》最终的决战大戏是?";
+        option = ['《赵氏孤儿》','《孝庄秘史》','《橘子红了》']
+        question = "马术是奥运会比赛项目之一,以下哪一个不是对骑手的要求?";
+        option = ['三项赛和场地障碍参赛者不低于18','盛装舞步参赛者不低于16岁','必须拥有经国际马联认可的正式护照']
         // 测试单元
 
         
