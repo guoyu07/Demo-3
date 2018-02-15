@@ -10,13 +10,12 @@ var resNum = [];//储存每个选项的百度索引量
 var areAllBaiduResNumRd = false;
 function getWebpage (data, searchEngine, contentId){
     if(data){
-        // console.log(data);
         var $ = cheerio.load(data, {
             decodeEntities: false
         });
-        // var stringBuffer = $(contentId).html()
         try {
-            var stringBuffer = $(contentId).html().replace(/<\/?em>|<\/?b>|<a.*>/g,"");
+            let filterReg = /<\/?(?:a|em|b|span|div|h3|li|ul|ol|img|br|i|p|strong)[\w\W]*?>|<(?:cite|style|script)[\w\W]*?>[\w\W]*?<\/(cite|style|script)|>|<!--[\w\W]*?-->|(?:sogou_preview_link="[\w\W]*?")|(?:url="[\w\W]*?")/gm;
+            var stringBuffer = $(contentId).html().replace(filterReg,"");
             // console.log(stringBuffer);
         } catch(error){
             console.log("٩(ŏ﹏ŏ、)۶ "+searchEngine+" 无数据!");
@@ -36,6 +35,7 @@ function getWebpage (data, searchEngine, contentId){
                 }
                 if(count === OCR.option.length){
                     areAllOpRd = true;
+                    // console.log(wordsProcessor.finalOption);
                     print.printResult(searchEngine, stringBuffer);
                     clearInterval(timer1);
                 } else {

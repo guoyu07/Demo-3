@@ -2,6 +2,7 @@ const iconv = require('iconv-lite'); // 解码
 const http = require('http');
 exports.download = download;
 exports.downloadG = downloadG;
+exports.getNonRepeatKeywords = getNonRepeatKeywords;
 
 //函数 获取下载网页源码 异步
 function download(url, callback, index) {
@@ -46,6 +47,38 @@ var quickSort = ([n, ...nums], desc) =>
       ];
 
 exports.quickSort = quickSort;
+
+//数组去重
+function getNonRepeatKeywords (oneOpKeywords, indexOfOneOp, allOp){
+    var a, b;
+    var nonRepeatKeywords = [];
+    if (typeof oneOpKeywords === 'object'){
+        for (a in oneOpKeywords){
+            let isntSpecKeyword = 0;
+            for(b in allOp){
+                if (Number(b) === Number(indexOfOneOp)){
+                    //调试用
+                    //console.log('跳过'+ allOp[b])
+                    isntSpecKeyword += 0;
+                } else {
+                    isntSpecKeyword += (allOp[b].indexOf(oneOpKeywords[a]) + 1)
+                    //调试用
+                    // if(allOp[b].indexOf(oneOpKeywords[a]) >= 0){
+                    //     console.log(oneOpKeywords[a]+'出现在'+allOp[b])
+                    // }
+                }
+            }
+            if(!isntSpecKeyword){
+                nonRepeatKeywords.push(oneOpKeywords[a]);
+            }
+        }
+    } else {
+        return oneOpKeywords; //如果不是数组则原值返回
+    }
+    return nonRepeatKeywords;
+}
+
+
 //数组判断是否每个key都相等
 // function isArrEqu (arr){
 //     var key,

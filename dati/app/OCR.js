@@ -68,6 +68,7 @@ function baiduOCR(imageBuffer){
         // 测试单元(测试前请连上手机不必亮屏)
         // words_result_num = 3;
         // isOptionFull = true;
+
         // question = "夜盲症俗称“雀蒙眼”,一般是由于缺乏哪种维生素导致的?";
         // option = ['维生素A','维生素B','维生素C']
         // question = "在华北平原地区烧水时,水的沸点大约是?";
@@ -78,15 +79,18 @@ function baiduOCR(imageBuffer){
         // option = ['黄河洪峰水位','这是洪顶水位测试','所以洪极水位测试']
         // question = "“胜作一书生”的前一句是以下哪个选项?";
         // option = ['歌罢仰天叹','至今思项羽','宁为百夫长']
-        question = "古代甲骨文是书写在什么上的?";
-        option = ['龟甲或兽骨','石头上','木头上']
-        question = "综艺《演员的诞生》最终的决战大戏是?";
-        option = ['《赵氏孤儿》','《孝庄秘史》','《橘子红了》']
-        question = "马术是奥运会比赛项目之一,以下哪一个不是对骑手的要求?";
-        option = ['三项赛和场地障碍参赛者不低于18','盛装舞步参赛者不低于16岁','必须拥有经国际马联认可的正式护照']
+        // question = "古代甲骨文是书写在什么上的?";
+        // option = ['大树或兽骨','石头和大树','石头或河流']
+        // question = "马术是奥运会比赛项目之一,以下哪一个不是对骑手的要求?";
+        // option = ['三项赛和场地障碍参赛者不低于18','盛装舞步参赛者不低于16岁','必须拥有经国际马联认可的正式护照']
+        // question = "“清乾隆各种釉彩大瓶”装饰的釉、彩共达多少层?";
+        // option = ['16','17','18']
+        // question = "一只木桶能装多少水取决于它?";
+        // option = ['最长的木板','最短的木板','无所谓']
+        // question = "“华尔街40号大厦”是哪座建筑的旧称？";
+        // option = ['纽约特朗普大厦','纽约帝国大厦','纽约洛克菲勒中心']
         // 测试单元
 
-        
         wordsProcessor.OptionWordsProcessor(option);  
         
 
@@ -114,7 +118,7 @@ function baiduOCR(imageBuffer){
         exports.option = option;
 
         //下载数据
-        tool.download(reqURL3, function(data){get.getWebpage(data, "Sogou", "#main")}) //搜狗
+        tool.download(reqURL3, function(data){get.getWebpage(data, "Sogou", "div.results")}) //搜狗
         tool.download(reqURL, function(data){get.getWebpage(data, "Baidu", "#content_left")}) //百度
         tool.downloadG(opts, function(data){get.getWebpage(data, "Google", "#res")}) //Google
         
