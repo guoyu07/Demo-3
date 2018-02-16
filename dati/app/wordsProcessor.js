@@ -19,25 +19,32 @@ function OptionWordsProcessor(option){ //对选项进行文字优化
     }
 
     function localProcessor(i){
-            if(option_copy[i].search(/[#《》“”°「」]/) >= 0){
-                option_copy[i] = option_copy[i].replace(/[#《》“”°C「」]/g,"") //去特殊符号（优化对书名的搜索）
-                option_copy.skipWordsSpliting = true;
-                console.log("(本地处理01)去除特殊符号:"+option_copy[i]);
-            }
-            if(option_copy[i].search(/[+\-,&/~、，·]/) >= 1){
-                option_copy[i] = option_copy[i].split(/[+\-,&/~、，·]/) //去连接符号（优化对于英文名等选项的搜索）
-                option_copy.skipWordsSpliting = true;
-                console.log("(本地处理02)拆分选项:"+option_copy[i]);
-            } 
-            if(/^(?:[0-9]+)(?:\.?)(?:[0-9]*)(?:[a-zA-Z]+|[\u4e00-\u9fa5]+)$/.test(option_copy[i]) && option_copy[i].search(/[a-zA-Z]+|[\u4e00-\u9fa5]+/)>=3 ){
-                let optionCache = [];
-                let wordsStartFrom = option_copy[i].search(/[a-zA-Z]+|[\u4e00-\u9fa5]+/);
-                optionCache.push(option_copy[i].slice(0, wordsStartFrom ));
-                optionCache.push(option_copy[i].slice(wordsStartFrom, option_copy[i].length ));
-                option_copy[i] = optionCache;
-                option_copy.skipWordsSpliting = true;
-                console.log("(本地处理03)拆分选项:"+option_copy[i]);//拆分数字与中英文单位（优化对带中英文单位的选项的搜索）
-            }
+        if(option_copy[i].search(/[#《》“”°「」]/) >= 0){
+            option_copy[i] = option_copy[i].replace(/[#《》“”°C「」]/g,"") //去特殊符号（优化对书名的搜索）
+            option_copy.skipWordsSpliting = true;
+            console.log("(本地处理01)去除特殊符号:"+option_copy[i]);
+        }
+        if(option_copy[i].search(/[+\-,&/~、，·]/) >= 1){
+            option_copy[i] = option_copy[i].split(/[+\-,&/~、，·]/) //去连接符号（优化对于英文名等选项的搜索）
+            option_copy.skipWordsSpliting = true;
+            console.log("(本地处理02)拆分选项-连接符号:"+option_copy[i]);
+        } 
+        if(/^(?:[0-9]+)(?:\.?)(?:[0-9]*)(?:[a-zA-Z]+|[\u4e00-\u9fa5]+)$/.test(option_copy[i]) && option_copy[i].search(/[a-zA-Z]+|[\u4e00-\u9fa5]+/)>=3 ){
+            let optionCache = [];
+            let wordsStartFrom = option_copy[i].search(/[a-zA-Z]+|[\u4e00-\u9fa5]+/);
+            optionCache.push(option_copy[i].slice(0, wordsStartFrom ));
+            optionCache.push(option_copy[i].slice(wordsStartFrom, option_copy[i].length ));
+            option_copy.skipWordsSpliting = true;
+            console.log("(本地处理03)拆分选项-中英单位:"+option_copy[i]);//拆分数字与中英文单位（优化对带中英文单位的选项的搜索）
+        }
+        if(/^\d[\d,]{4,}\d$/.test(option_copy[i])){
+            let optionCache = [];
+            optionCache.push(String(option_copy[i]).replace(/,/g,''));
+            optionCache.push(String(option_copy[i]).replace(/,/g,'').replace(/(\d)(?=(?:\d{3})+$)/g,"$1,"));
+            option_copy[i] = optionCache;
+            option_copy.skipWordsSpliting = true;
+            console.log("(本地处理04)处理多位数字选项:"+option_copy[i]);
+        }
 
         if ( HMOptionsWordsMoreThan5 < option_copy.length || option_copy.skipWordsSpliting ){ // 选项短不用分词
             finalOption[i] = option_copy[i];
@@ -48,25 +55,33 @@ function OptionWordsProcessor(option){ //对选项进行文字优化
                     splitWords.push(option_copy[i].slice(d, d+2));
             }
             finalOption[i] = tool.getNonRepeatKeywords(splitWords, i, option);
-            console.log("(本地处理04)暴力分词:"+finalOption[i])
+            console.log("(本地处理05)暴力分词:"+finalOption[i])
         }
     }
 
     nlp.tag(option, function(data){
         var a,b;
         data = JSON.parse(data);
-        // console.log(data);
+        console.log(data);
         for(a in data){
             (function (a){
                 // console.log('原选项是:'+option[a]);
                 let singleOpSpQu = data[a].word.length;
                 let cache = 0;
-                for(b in data[a].tag){
-                    if(/(?:^n.*$)|(?:^[tcp]$)/.test(data[a].tag[b])){ //Boson 处理筛选器
+                let confrimBoson = false;
+                let skipBoson = false;
+                data[a].tag.forEach((element,index) => {
+                    if(/(?:^n.*$)|(?:^[tcp]$)/.test(element)){ //Boson 处理筛选器
                         cache += 1;
                     }
+                });
+                if(String(data[a].tag).match(/^n\w*,nx$/)){ //排除特殊情况(如:维生素A)
+                    skipBoson = true;
+                } 
+                if(String(data[a].tag).match(/(?:^n\w*,z,n\w*$)|(?:^n\w*,u\w*$)/)){ //确定特殊情况(如:奥斯卡最佳影片;黑色的;)
+                    confrimBoson = true;
                 }
-                if(singleOpSpQu === cache && cache >= 2){
+                if(singleOpSpQu === cache && cache >= 2 && !skipBoson || confrimBoson){
                     // console.log("云端提取关键词"+option[a]);
                     nlp.extractKeywords(option[a], function(data){
                         data = JSON.parse(data);
@@ -78,7 +93,7 @@ function OptionWordsProcessor(option){ //对选项进行文字优化
                             }
                         }
                         finalOption[a] = tool.getNonRepeatKeywords(cache, a, option);
-                        console.log('提取关键词:' + finalOption[a]);
+                        console.log('(Boson处理)提取关键词:' + finalOption[a]);
                     })
                 } else {
                     localProcessor(a);
