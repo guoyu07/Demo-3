@@ -54,32 +54,27 @@ function getNonRepeatKeywords (oneOpKeywords, indexOfOneOp, allOp){
     var nonRepeatKeywords = [];
     if (typeof oneOpKeywords === 'object'){
         for (a in oneOpKeywords){
-            if(!/^\d+$/.test(oneOpKeywords[a])){
-                let isntSpecKeyword = 0;
-                for(b in allOp){
-                    if (Number(b) === Number(indexOfOneOp)){
-                        //调试用
-                        // console.log('跳过'+ allOp[b])
-                        isntSpecKeyword += 0;
-                    } else {
-                        isntSpecKeyword += (allOp[b].indexOf(oneOpKeywords[a]) + 1)
-                        //调试用
-                        // if(allOp[b].indexOf(oneOpKeywords[a]) >= 0){
-                        //     console.log(oneOpKeywords[a]+'出现在'+allOp[b])
-                        // }
-                    }
+            let isntSpecKeyword = 0;
+            for(b in allOp){
+                if (Number(b) === Number(indexOfOneOp)){
+                    //调试用
+                    //console.log('跳过'+ allOp[b])
+                    isntSpecKeyword += 0;
+                } else {
+                    isntSpecKeyword += (allOp[b].indexOf(oneOpKeywords[a]) + 1)
+                    //调试用
+                    // if(allOp[b].indexOf(oneOpKeywords[a]) >= 0){
+                    //     console.log(oneOpKeywords[a]+'出现在'+allOp[b])
+                    // }
                 }
-                if(!isntSpecKeyword){
-                    nonRepeatKeywords.push(oneOpKeywords[a]);
-                }
-            } else {
+            }
+            if(!isntSpecKeyword){
                 nonRepeatKeywords.push(oneOpKeywords[a]);
             }
         }
     } else {
         return oneOpKeywords; //如果不是数组则原值返回
     }
-    // console.log(nonRepeatKeywords);
     return nonRepeatKeywords;
 }
 

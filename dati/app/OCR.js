@@ -32,11 +32,9 @@ function baiduOCR(imageBuffer){
         var i, a;
         var question = ""; //储存问题
         var option = []; //储存选项
-        var finalOption;
         var reqURL = ""; //储存组合链接--Baidu
         var reqURL2 = ""; //储存组合链接--Google
         var reqURL3 = ""; //储存组合链接--Sogo
-        
         
         // console.log(result);
 
@@ -46,6 +44,8 @@ function baiduOCR(imageBuffer){
         if (words_result_num <= 3 ){
             isOptionFull = false;
         }
+
+        // //三选项
 
         for(i in words_result){
             if (words_result_num >= 4) {
@@ -64,33 +64,40 @@ function baiduOCR(imageBuffer){
             }
         } 
 
+        //四选项
+
+        // for(i in words_result){
+        //     if (words_result_num >= 6) {
+        //         if(i <= words_result_num-5){
+        //             question += words_result[i]["words"].replace(/^[1-9]{1}[0-2]?[.:,]?/,"").replace(/[丿]/g,""); //收集问题文字
+        //         }
+        //         if (i > words_result_num-5){
+        //             option.push(words_result[i]["words"].replace(/^[A-Dc]{1}\b[\.:,]?/,"").replace(/[丿]/g,"")); //收集选项文字
+        //         }
+        //     } else if ( words_result_num <= 5){
+        //         if ( i < 1 ){
+        //             question += words_result[i]["words"].replace(/^[1-9]{1}[0-2]?[.:,]?/,"").replace(/[丿]/g,"");
+        //         } else if ( i !== 0){
+        //             option.push(words_result[i]["words"].replace(/^[A-Dc]{1}\b[\.:,]?/,"").replace(/[丿]/g,""));
+        //         }
+        //     }
+        // } 
+
 
         // 测试单元(测试前请连上手机不必亮屏)
-        words_result_num = 3;
-        isOptionFull = true;
+        // words_result_num = 3;
+        // isOptionFull = true;
 
-        question = "夜盲症俗称“雀蒙眼”,一般是由于缺乏哪种维生素导致的?";
-        option = ['维生素A','维生素B','维生素C']
         // question = "在华北平原地区烧水时,水的沸点大约是?";
         // option = ['80°C ','90°C','100°C']
-        // question = "中世纪城堡楼梯一般都是顺时针方向螺旋上升的原因是什么?";
-        // option = ['符合当时人们的审美','让防守城堡的人有优势','有利于城堡稳固']
         // question = "发生洪水时洪水的最高水位处叫什么?";
         // option = ['黄河洪峰水位','洪顶水位测试','洪极水位测试']
-        // question = "“胜作一书生”的前一句是以下哪个选项?";
-        // option = ['歌罢仰天叹','至今思项羽','宁为百夫长']
         // question = "古代甲骨文是书写在什么上的?";
         // option = ['大树或兽骨','石头和大树','石头或河流']
         // question = "“清乾隆各种釉彩大瓶”装饰的釉、彩共达多少层?";
-        // option = ['164,1,243','1,731,443','181333']
-        // question = "一只木桶能装多少水取决于它?";
-        // option = ['最长的木板','最短的木板','无所谓']
-        // question = "“华尔街40号大厦”是哪座建筑的旧称？";
-        // option = ['纽约特朗普大厦','纽约帝国大厦','纽约洛克菲勒中心']
-        // question = "《走出非洲》讲述了女主角远炫肯尼亚的情故事,该片获得了什么奖项?";
-        // option = ['金鸡百花奖','奥斯卡最佳影片','格莱美奖']
-        // question = "大多数非洲人民的皮肤是?";
-        // option = ['白色的','黄色的','黑色的']
+        // option = ['164,1,243个','1,731,443个','181333个']
+        // question = "下面民间传说中与元宵节的起源有关的是?";
+        // option = ['牛郎织女的故事','嫦娥奔月的传说','东方朔与思乡宫女的故事'];
         // 测试单元
 
         wordsProcessor.OptionWordsProcessor(option);  
@@ -116,7 +123,6 @@ function baiduOCR(imageBuffer){
         
         exports.isOptionFull = isOptionFull;
         exports.question = question;
-        // exports.finalOption = finalOption;
         exports.option = option;
 
         //下载数据

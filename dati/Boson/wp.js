@@ -6,8 +6,8 @@ exports.OptionWordsProcessor = OptionWordsProcessor;
 var nlp = new bosonnlp.BosonNLP('y5KSaEvo.23507.7RbLhfw8y5Ef');
 
 //测试单元(覆盖正式版本记得删掉)
-// var option = ['牛郎织女的故事','嫦娥奔月的传说','东方朔与思乡宫女的故事'];
-// OptionWordsProcessor(option);
+var option = ['牛郎织女的故事','嫦娥奔月的传说','东方朔与思乡宫女的故事'];
+OptionWordsProcessor(option);
 
 function OptionWordsProcessor(option){ //对选项进行文字优化
     var i, a, b, c;
@@ -65,7 +65,7 @@ function OptionWordsProcessor(option){ //对选项进行文字优化
     nlp.tag(option, function(data){
         var a,b;
         data = JSON.parse(data);
-        // console.log(data);
+        console.log(data);
         for(a in data){
             (function (a){
                 // console.log('原选项是:'+option[a]);
@@ -93,7 +93,6 @@ function OptionWordsProcessor(option){ //对选项进行文字优化
                     // console.log("云端提取关键词"+option[a]);
                     nlp.extractKeywords(option[a], function(data){
                         data = JSON.parse(data);
-                        // console.log(data);
                         var cache = [];
                         var c;
                         for(c in data[0]){
@@ -110,7 +109,7 @@ function OptionWordsProcessor(option){ //对选项进行文字优化
             })(a);//闭包防止a变化 
             exports.finalOption = finalOption;
         }
-        // console.log('最终处理结果:'+finalOption)
+        console.log('最终处理结果:'+finalOption)
     })
 }
 

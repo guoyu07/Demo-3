@@ -5,10 +5,6 @@ exports.OptionWordsProcessor = OptionWordsProcessor;
 //Boson API KEY
 var nlp = new bosonnlp.BosonNLP('y5KSaEvo.23507.7RbLhfw8y5Ef');
 
-//测试单元(覆盖正式版本记得删掉)
-// var option = ['牛郎织女的故事','嫦娥奔月的传说','东方朔与思乡宫女的故事'];
-// OptionWordsProcessor(option);
-
 function OptionWordsProcessor(option){ //对选项进行文字优化
     var i, a, b, c;
     var finalOption = [];
@@ -30,14 +26,12 @@ function OptionWordsProcessor(option){ //对选项进行文字优化
         }
         if(option_copy[i].search(/[+\-,&/~、，·]/) >= 1){
             option_copy[i] = option_copy[i].split(/[+\-,&/~、，·]/) //去连接符号（优化对于英文名等选项的搜索）
-            option_copy[i] = tool.getNonRepeatKeywords(option_copy[i], i, option);
             option_copy.skipWordsSpliting = true;
             console.log("(本地处理02)处理连接符号:"+option_copy[i]);
         } 
         // if(/^[\w]+\.?\d*\s*(?:[a-zA-Z]+|[\u4e00-\u9fa5]+)$/.test(option_copy[i]) && option_copy[i].search(/\b(?=\s*[a-zA-z]+$|\s*[\u4e00-\u9fa5]+$)/)>=2 ){
-        else if(option_copy[i].search(/\b(?=\s*[a-zA-z]+$|\s*[\u4e00-\u9fa5]+$)/)>=2 ){
+        if(option_copy[i].search(/\b(?=\s*[a-zA-z]+$|\s*[\u4e00-\u9fa5]+$)/)>=2 ){
             option_copy[i] = option_copy[i].replace(/\s/,'').split(/\b(?=[a-zA-z]+$|[\u4e00-\u9fa5]+$)/)
-            option_copy[i] = tool.getNonRepeatKeywords(option_copy[i], i, option);
             option_copy.skipWordsSpliting = true;
             console.log("(本地处理03)处理混合语言:"+option_copy[i]);//拆分数字与中英文单位（优化对带中英文单位的选项的搜索）
         }
@@ -50,8 +44,7 @@ function OptionWordsProcessor(option){ //对选项进行文字优化
             console.log("(本地处理04)处理多位数字:"+option_copy[i]);
         }
         if ( HMOptionsWordsMoreThan5 < option_copy.length || option_copy.skipWordsSpliting ){ // 选项短不用分词
-            // finalOption[i] = tool.getNonRepeatKeywords(option_copy[i], i, option);
-            finalOption[i] = option_copy[i];
+            finalOption[i] = tool.getNonRepeatKeywords(option_copy[i], i, option);
         } else if ( HMOptionsWordsMoreThan5 === option_copy.length ){ // 选项长需要分词
             let splitWords = [];//储存分词
             for ( d = 0; d <= option_copy[i].length-2; d += 2 ){
@@ -70,30 +63,24 @@ function OptionWordsProcessor(option){ //对选项进行文字优化
             (function (a){
                 // console.log('原选项是:'+option[a]);
                 let singleOpSpQu = data[a].word.length;
-                let nNum = 0;
+                let cache = 0;
                 let confrimBoson = false;
                 let skipBoson = false;
                 data[a].tag.forEach((element,index) => {
-                    // if(/(?:^n\w*$)|(?:^(?:[tcpmb]|ude)$)/.test(element)){ //Boson 处理筛选器
-                    if(/^n\w*$/.test(element)){ //Boson 处理筛选器
-                        nNum += 1;
+                    if(/(?:^n\w*$)|(?:^[tcpmb]$)/.test(element)){ //Boson 处理筛选器
+                        cache += 1;
                     }
                 });
-                if(nNum >= (data[a].tag.length*0.5)){
-                    confrimBoson = true;
-                }
                 if(String(data[a].tag).match(/(?:^n[^x]*,nx$)|(?:^nx,n[^x]*$)/)){ //排除特殊情况(如:维生素A)
                     skipBoson = true;
                 } 
-                // if(String(data[a].tag).match(/(?:^n\w*,z,n\w*$)|(?:^n\w*,u\w*$)|(?:n\w*,v,n\w*)/)){ //确定特殊情况(如:奥斯卡最佳影片;黑色的;)
-                //     confrimBoson = true;
-                // }
-                // if(singleOpSpQu === cache && cache >= 2 && !skipBoson || confrimBoson){
-                if(data[a].tag.length >= 2 && !skipBoson && confrimBoson){
+                if(String(data[a].tag).match(/(?:^n\w*,z,n\w*$)|(?:^n\w*,u\w*$)|(?:n\w*,v,n\w*)/)){ //确定特殊情况(如:奥斯卡最佳影片;黑色的;)
+                    confrimBoson = true;
+                }
+                if(singleOpSpQu === cache && cache >= 2 && !skipBoson || confrimBoson){
                     // console.log("云端提取关键词"+option[a]);
                     nlp.extractKeywords(option[a], function(data){
                         data = JSON.parse(data);
-                        // console.log(data);
                         var cache = [];
                         var c;
                         for(c in data[0]){
@@ -110,7 +97,5 @@ function OptionWordsProcessor(option){ //对选项进行文字优化
             })(a);//闭包防止a变化 
             exports.finalOption = finalOption;
         }
-        // console.log('最终处理结果:'+finalOption)
     })
 }
-
